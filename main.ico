@@ -1,0 +1,46 @@
+int brightness = 0;
+int pins[] = {3, 5, 6, 9, 10, 11};
+int sensorReading = 150;
+int outputValue = 0;
+int direction = 1;
+
+void setPinsToOutput() {
+  for (int i = 0; i < (sizeof(pins) / sizeof(pins[0])); i++) {
+    pinMode(pins[i], OUTPUT);
+  }
+}
+
+void writeToPins(int brightness) {
+  for (int i = 0; i < (sizeof(pins) / sizeof(pins[0])); i++) {
+    analogWrite(pins[i], brightness);
+  }
+}
+
+void setup() {
+  Serial.begin(9600);
+  setPinsToOutput();
+  pinMode(A0, INPUT);
+}
+
+void loop() {
+  writeToPins(0);
+  sensorReading = analogRead(A0);
+  outputValue = map(sensorReading, 0, 1023, 10, 300);
+  Serial.println(sensorReading);
+
+  for (int i = 0; i < 6; i++) {
+    writeToPins(0);
+    analogWrite(pins[i - 2], 255 / 16);
+    analogWrite(pins[i - 1], 255 / 8);
+    analogWrite(pins[i], 255);
+    delay(outputValue);
+  }
+
+  for (int i = 5; i >= 0; i--) {
+    writeToPins(0);
+    analogWrite(pins[i + 2], 255 / 16);
+    analogWrite(pins[i + 1], 255 / 8);
+    analogWrite(pins[i], 255);
+    delay(outputValue);
+  }
+}
